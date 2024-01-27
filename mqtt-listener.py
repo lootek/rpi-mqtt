@@ -4,9 +4,7 @@ import datetime
 import logging
 import pprint
 
-
 logging.basicConfig(level=logging.INFO)
-
 
 def persists(msg):
     pprint.pprint(msg)
@@ -32,5 +30,5 @@ influx_client = InfluxDBClient('influxdb', 8086, database='iot')
 client = mqtt.Client()
 client.on_connect = lambda self, mosq, obj, rc: self.subscribe("#")
 client.on_message = lambda client, userdata, msg: persists(msg)
-client.connect('127.0.0.1', 1883, 60)
+client.connect('mosquitto', 1883, 60)
 client.loop_forever()

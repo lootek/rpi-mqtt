@@ -6,6 +6,11 @@ services:
     container_name: iot-python
     restart: always
 
+  mqtt-python:
+    image: mqtt-python:latest
+    container_name: mqtt-python
+    restart: always
+
   mosquitto:
     #image: pascaldevink/rpi-mosquitto
     image: eclipse-mosquitto:latest
