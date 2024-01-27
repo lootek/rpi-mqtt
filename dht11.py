@@ -17,10 +17,14 @@ def connect_mqtt():
         else:
             print("Failed to connect, return code {}\n".format(rc))
 
+    def on_disconnect(client, userdata, rc):
+        client.connect(broker, port, keepalive=60)
+
     client = mqtt_client.Client(client_id)
-    client.username_pw_set("admin", "password")
+    # client.username_pw_set("admin", "password")
     client.on_connect = on_connect
-    client.connect(broker, port)
+    client.on_disconnect = on_disconnect
+    client.connect(broker, port, keepalive=60)
     return client
 
 
@@ -33,10 +37,7 @@ def publish(client, topic, msg):
         print("Failed to send message to topic {}".format(topic))
 
 
-def run():
-    client = connect_mqtt()
-    client.loop_start()
-
+def measure():
     while True:
         humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, 4)
         print("Temp: {0:0.1f} C  Humidity: {1:0.1f} %".format(temperature, humidity))
@@ -47,9 +48,12 @@ def run():
 
 
 if __name__ == "__main__":
+    client = connect_mqtt()
+    client.loop_start()
+
     while True:
         try:
-            run()
+            measure()
         except Exception as error:
             print("Exception: ", error)
         finally:

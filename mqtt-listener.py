@@ -30,6 +30,7 @@ influx_client = InfluxDBClient('influxdb', 8086, database='iot')
 
 client = mqtt.Client()
 client.on_connect = lambda self, mosq, obj, rc: self.subscribe("#")
+client.on_disconnect = lambda self, mosq, obj, rc: client.connect('mosquitto', 1883, keepalive=60)
 client.on_message = lambda client, userdata, msg: persists(msg)
-client.connect('mosquitto', 1883, 60)
+client.connect('mosquitto', 1883, keepalive=60)
 client.loop_forever()
