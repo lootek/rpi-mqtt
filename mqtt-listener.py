@@ -7,17 +7,18 @@ import pprint
 logging.basicConfig(level=logging.INFO)
 
 def persists(msg):
-    pprint.pprint(msg)
-    pass
+    if msg.payload == "nan":
+        logging.info("Skipping invalid measurement")
+        pass
 
     current_time = datetime.datetime.utcnow().isoformat()
     json_body = [
         {
-            "measurement": "pot",
+            "measurement": msg.topic,
             "tags": {},
             "time": current_time,
             "fields": {
-                "value": int(msg.payload)
+                "value": msg.payload
             }
         }
     ]
