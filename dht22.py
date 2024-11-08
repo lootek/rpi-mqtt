@@ -5,10 +5,13 @@ from time import sleep
 import Adafruit_DHT
 from paho.mqtt import client as mqtt_client
 
-broker = "mosquitto"
 port = 1883
-client_id = "ithilien-python-mqtt"
 
+broker = "192.168.10.18"
+client_id = "lothlorien-python-mqtt"
+
+#broker = "mosquitto"
+#client_id = "ithilien-python-mqtt"
 
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
@@ -21,7 +24,6 @@ def connect_mqtt():
         client.connect(broker, port, keepalive=60)
 
     client = mqtt_client.Client(client_id)
-    # client.username_pw_set("admin", "password")
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
     client.connect(broker, port, keepalive=60)
@@ -34,40 +36,30 @@ def publish(client, topic, msg):
     if status == 0:
         print("Sent `{}` to topic `{}`".format(msg, topic))
     else:
-        print("Failed to send message to topic {}".format(topic))
+        raise RuntimeError("Failed to send message to topic {}".format(topic))
 
 
 def measure():
     while True:
         humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 4)
         print("Temp: {0:0.1f} C  Humidity: {1:0.1f} %".format(temperature, humidity))
-        publish(client, "/sensors/attic/dht22/temperature", temperature)
-        publish(client, "/sensors/attic/dht22/humidity", humidity)
+        publish(client, "/sensors/living_room/dht22/temperature", temperature)
+        publish(client, "/sensors/living_room/dht22/humidity", humidity)
 
         sleep(60)
 
 
 if __name__ == "__main__":
-    client = connect_mqtt()
-    client.loop_start()
-
     while True:
-        try:
-            measure()
-        except Exception as error:
-            print("Exception: ", error)
-        finally:
-            print("Retrying in 5 min")
-            sleep(300)
-            #continue
+        client = connect_mqtt()
+        client.loop_start()
 
+        while True:
+            try:
+                measure()
+            except Exception as error:
+                print("Exception: ", error)
+                break
 
-# import RPi.GPIO as GPIO
-
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setup(4, GPIO.IN)
-
-# while True:
-#  print(GPIO.input(4))
-#  sleep(1)
-
+        print("Retrying in 5 min")
+        sleep(300)
