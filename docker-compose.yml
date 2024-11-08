@@ -5,32 +5,33 @@ services:
     image: iot-python:latest
     container_name: iot-python
     restart: always
+    privileged: true
+    depends_on:
+      - mqtt-python
 
   mqtt-python:
     image: mqtt-python:latest
     container_name: mqtt-python
     restart: always
+    depends_on:
+      - mosquitto
 
   mosquitto:
-    #image: pascaldevink/rpi-mosquitto
     image: eclipse-mosquitto:latest
     container_name: mosquitto
+    restart: always
+    depends_on:
+      - influxdb
     ports:
      - "9001:9001"
      - "1883:1883"
-    restart: always
     volumes:
-     - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
-     - ./mosquitto-creds.txt:/mosquitto/config/password.txt
+     - ./volumes/mosquitto:/mosquitto/config
 
   influxdb:
-    #image: hypriot/rpi-influxdb
     image: influxdb:1.8
     container_name: influxdb
     restart: always
-    #environment:
-    # - INFLUXDB_INIT_PWD="password"
-    # - INFLUXDB_DB="iot"
     ports:
      - "8083:8083"
      - "8086:8086"
@@ -38,21 +39,18 @@ services:
      - ~/docker/influxdb/data:/data
 
   grafana:
-    #image: fg2it/grafana-armhf:v4.6.3
     image: grafana/grafana:10.1.2
     container_name: grafana
     restart: always
     ports:
      - "3000:3000"
     volumes:
-      - grafana-db:/var/lib/grafana
-      - grafana-log:/var/log/grafana
-      - grafana-conf:/etc/grafana
+      - ./volumes/grafana/db:/var/lib/grafana
+      - ./volumes/grafana/log:/var/log/grafana
+      - ./volumes/grafana/conf:/etc/grafana
+#    networks:
+#      - host
 
-volumes:
-  grafana-db:
-    driver: local
-  grafana-log:
-    driver: local
-  grafana-conf:
-    driver: local
+#networks:
+#  host:
+#    external: true
