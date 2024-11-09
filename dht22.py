@@ -7,11 +7,11 @@ from paho.mqtt import client as mqtt_client
 
 port = 1883
 
-broker = "192.168.10.18"
-client_id = "lothlorien-python-mqtt"
+#broker = "192.168.10.18"
+#client_id = "lothlorien-python-mqtt"
 
-#broker = "mosquitto"
-#client_id = "ithilien-python-mqtt"
+broker = "mosquitto"
+client_id = "ithilien-python-mqtt"
 
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
@@ -43,8 +43,8 @@ def measure():
     while True:
         humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 4)
         print("Temp: {0:0.1f} C  Humidity: {1:0.1f} %".format(temperature, humidity))
-        publish(client, "/sensors/living_room/dht22/temperature", temperature)
-        publish(client, "/sensors/living_room/dht22/humidity", humidity)
+        publish(client, "/sensors/attic/dht22/temperature", temperature)
+        publish(client, "/sensors/attic/dht22/humidity", humidity)
 
         sleep(60)
 
