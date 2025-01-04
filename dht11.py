@@ -7,7 +7,7 @@ from paho.mqtt import client as mqtt_client
 
 broker = "mosquitto"
 port = 1883
-client_id = "ithilien-python-mqtt"
+client_id = "ithilien-python-dht11"
 
 
 def connect_mqtt():
@@ -59,7 +59,7 @@ if __name__ == "__main__":
         finally:
             print("Retrying in 5 min")
             sleep(300)
-            #continue
+            # continue
 
 
 # import RPi.GPIO as GPIO
@@ -70,4 +70,3 @@ if __name__ == "__main__":
 # while True:
 #  print(GPIO.input(4))
 #  sleep(1)
-
