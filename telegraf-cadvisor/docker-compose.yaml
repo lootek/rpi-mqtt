@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  telegraf:
+    container_name: telegraf
+    image: telegraf
+    restart: unless-stopped
+    environment:
+      HOSTNAME: "raspberrypi"
+      HOST_ETC: "/hostfs/etc"
+      HOST_PROC: "/hostfs/proc"
+      HOST_SYS: "/hostfs/sys"
+      HOST_MOUNT_PREFIX: "/hostfs"
+    volumes:
+      - /:/hostfs:ro
+      - /etc:/hostfs/etc:ro
+      - /proc:/hostfs/proc:ro
+      - /sys:/hostfs/sys:ro
+      - /var/run/utmp:/var/run/utmp:ro
+      - ./services/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    privileged: true
+    depends_on:
+      - influxdb
+      - mosquitto
+    networks:
+      - iotstack_nw
