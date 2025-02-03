@@ -8,10 +8,11 @@ from paho.mqtt import client as mqtt_client
 port = 1883
 
 #broker = "192.168.10.18"
-#client_id = "lothlorien-python-mqtt"
+#client_id = "lothlorien-python-dht22"
 
 broker = "mosquitto"
-client_id = "ithilien-python-mqtt"
+client_id = "ithilien-python-dht22"
+
 
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
