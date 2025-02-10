@@ -20,7 +20,7 @@ services:
   #     - prometheus
 
   telegraf:
-    image: telegraf:1.33
+    image: arm64v8/telegraf:1.33
     container_name: telegraf
     hostname: rohan
     restart: unless-stopped
@@ -28,6 +28,8 @@ services:
       - ../env/telegraf
     # networks:
     #   - influxdb
+    #privileged: true
+    user: telegraf:995
     volumes:
       - ../volumes/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
       - /:/hostfs:ro
