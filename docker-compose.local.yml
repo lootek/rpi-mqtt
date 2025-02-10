@@ -4,7 +4,7 @@ services:
   iot-python:
     image: iot-python:latest
     container_name: iot-python
-    restart: always
+    restart: unless_stopped
     privileged: true
     depends_on:
       - mqtt-python
@@ -12,14 +12,14 @@ services:
   mqtt-python:
     image: mqtt-python:latest
     container_name: mqtt-python
-    restart: always
+    restart: unless_stopped
     depends_on:
       - mosquitto
 
   mosquitto:
-    image: eclipse-mosquitto:latest
+    image: eclipse-mosquitto:2.0.18
     container_name: mosquitto
-    restart: always
+    restart: unless_stopped
     depends_on:
       - influxdb
     ports:
@@ -31,17 +31,19 @@ services:
   influxdb:
     image: influxdb:1.8
     container_name: influxdb
-    restart: always
+    restart: unless_stopped
     ports:
      - "8083:8083"
      - "8086:8086"
     volumes:
-     - ~/docker/influxdb/data:/data
+     - ./volumes/influxdb:/var/lib/influxdb
 
   grafana:
     image: grafana/grafana:10.1.2
     container_name: grafana
-    restart: always
+    env_file:
+     - './env/grafana'
+    restart: unless_stopped
     ports:
      - "3000:3000"
     volumes:
