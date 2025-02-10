@@ -48,11 +48,11 @@ services:
     privileged: true
     # networks:
     #   - internal
-    expose:
-      - 8080
+    # expose:
+    #   - 8080
     # restart: always
-    ports:
-      - "8080:8080"
+    # ports:
+    #   - "8080:8080"
     devices:
       - /dev/kmsg
     volumes:
