@@ -3,6 +3,7 @@ from influxdb import InfluxDBClient
 import datetime
 import logging
 import re
+import socket
 
 logging.basicConfig(level=logging.INFO)
 
@@ -62,17 +63,25 @@ def save_msg(msg):
         measurement = sensor
         sensor = "system"
 
+    hostname = ""
+    try:
+        hostname = socket.gethostname()
+    except:
+        pass
+
     json_body = [
         {
             "measurement": measurement,
             "time": current_time,
             "tags": {
                 "location": location,
+                "hostname": hostname,
                 "sensor": sensor,
             },
             "fields": {
                 measurement: value,
                 "location": location,
+                "hostname": hostname,
                 "sensor": sensor,
             },
         }
