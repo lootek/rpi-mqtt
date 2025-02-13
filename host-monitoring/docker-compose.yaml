@@ -20,9 +20,9 @@ services:
   #     - prometheus
 
   telegraf:
-    image: arm64v8/telegraf:1.33
+    image: telegraf:1.33
     container_name: telegraf
-    hostname: rohan
+    hostname: ithilien
     restart: unless-stopped
     env_file:
       - ../env/telegraf
@@ -38,7 +38,7 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor-arm64:v0.49.2
     container_name: cadvisor
-    hostname: rohan
+    hostname: ithilien
     # links:
     #   - influxdb:influxsrv
     command: 
