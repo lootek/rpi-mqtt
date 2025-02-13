@@ -3,7 +3,6 @@ from influxdb import InfluxDBClient
 import datetime
 import logging
 import re
-import socket
 
 logging.basicConfig(level=logging.INFO)
 
@@ -42,6 +41,10 @@ def extract_sensor_data(path):
     if match:
         return match.group(1), match.group(2), match.group(3)
 
+    match = re.match(r"/sensors/([^/]+)/([^/]+)/([^/]+)", path)
+    if match:
+        return match.group(1), match.group(2), match.group(3)
+
     raise RuntimeError("Failed to parse message {}".format(path))
 
 
@@ -63,26 +66,15 @@ def save_msg(msg):
         measurement = sensor
         sensor = "system"
 
-    hostname = ""
-    try:
-        hostname = socket.gethostname()
-    except:
-        pass
-
     json_body = [
         {
-            "measurement": measurement,
+            "measurement": sensor,
             "time": current_time,
             "tags": {
                 "location": location,
-                "hostname": hostname,
-                "sensor": sensor,
             },
             "fields": {
                 measurement: value,
-                "location": location,
-                "hostname": hostname,
-                "sensor": sensor,
             },
         }
     ]
