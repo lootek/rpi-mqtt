@@ -29,15 +29,15 @@ def save_msg_legacy(msg):
 
 
 def extract_sensor_data(path):
-    match = re.match(r"/sensors/([^/]+)/(lastwill)")
+    match = re.match(r"/sensors/([^/]+)/(lastwill)", path)
     if match:
         return match.group(1), match.group(2), None
 
-    match = re.match(r"/sensors/([^/]+)/(status)")
+    match = re.match(r"/sensors/([^/]+)/(status)", path)
     if match:
         return match.group(1), match.group(2), None
 
-    match = re.match(r"/sensors/([^/]+)/(wifi)/(ip)")
+    match = re.match(r"/sensors/([^/]+)/(wifi)/(ip)", path)
     if match:
         return match.group(1), match.group(2), match.group(3)
 

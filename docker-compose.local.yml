@@ -2,7 +2,7 @@ version: '3'
 
 services:
   iot-dht22:
-    image: iot-dht22:latest
+    image: iot-python:latest
     container_name: iot-dht22
     restart: unless-stopped
     privileged: true
@@ -10,7 +10,7 @@ services:
       - mqtt-to-influxdb
 
   mqtt-to-influxdb:
-    image: mqtt-to-influxdb:latest
+    image: mqtt-python:latest
     container_name: mqtt-to-influxdb
     restart: unless-stopped
     depends_on:
