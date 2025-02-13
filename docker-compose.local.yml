@@ -1,17 +1,17 @@
 version: '3'
 
 services:
-  iot-python:
-    image: iot-python:latest
-    container_name: iot-python
+  iot-dht22:
+    image: iot-dht22:latest
+    container_name: iot-dht22
     restart: unless-stopped
     privileged: true
     depends_on:
-      - mqtt-python
+      - mqtt-to-influxdb
 
-  mqtt-python:
-    image: mqtt-python:latest
-    container_name: mqtt-python
+  mqtt-to-influxdb:
+    image: mqtt-to-influxdb:latest
+    container_name: mqtt-to-influxdb
     restart: unless-stopped
     depends_on:
       - mosquitto
@@ -21,8 +21,6 @@ services:
     image: eclipse-mosquitto:2.0.18
     container_name: mosquitto
     restart: unless-stopped
-    depends_on:
-      - influxdb
     ports:
      - "9001:9001"
      - "1883:1883"
