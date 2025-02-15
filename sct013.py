@@ -68,7 +68,7 @@ debug = True
 
 # ADS1263
 # samples = 200
-# precision = int(2)
+ref_voltage = 230
 sensors_count = 9
 time_elapsed = 0
 
@@ -107,25 +107,25 @@ def publish(client, topic, msg):
 def measure(ADC):
     while True:
         # start timer for kWh calculations
-        start_time = time.time()
+        start_time = time()
 
-        channelList = [0] * sensors_count  # The channel must be less than 10
+        channelList = channelList = [i for i in range(10)]
         while 1:
-            ADC_Value = ADC.ADS1263_GetAll(channelList)  # get ADC1 value
+            ADC_Value = ADC.ADS1263_GetAll(channelList)
             for i in channelList:
                 if ADC_Value[i] >> 31 == 1:
                     print(
                         "ADC1 IN%d = -%lf"
                         % (
                             i,
-                            (REF_VOLTAGE * 2 - ADC_Value[i] * REF_VOLTAGE / 0x80000000),
+                            (ref_voltage * 2 - ADC_Value[i] * ref_voltage / 0x80000000),
                         )
                     )
                 else:
                     print(
                         "ADC1 IN%d = %lf"
-                        % (i, (ADC_Value[i] * REF_VOLTAGE / 0x7FFFFFFF))
-                    )  # 32bit
+                        % (i, (ADC_Value[i] * ref_voltage / 0x7FFFFFFF))
+                    )
             for i in channelList:
                 print("\33[2A")
 
@@ -150,9 +150,9 @@ def measure(ADC):
         #     # Calibrated for SCT-013 30A/1V
         #     for i in range(0, sensors_count):
         #         IrmsA[i] = float(peak[i] / float(2047) * 30)
-        #         IrmsA[i] = round(IrmsA[i], precision)
+        #         IrmsA[i] = round(IrmsA[i], 4)
         #         ampsA[i] = IrmsA[i] / sqrt(2)
-        #         ampsA[i] = round(ampsA[i], precision)
+        #         ampsA[i] = round(ampsA[i], 4)
 
         # # Calculate total AMPS from all sensors and convert to kW
         # kW = 0.0
@@ -202,13 +202,13 @@ def measure(ADC):
 if __name__ == "__main__":
     try:
         print("Initializing ADS1263")
-        ADC = ADS1263.ADS1263()
+        adc = ADS1263.ADS1263()
 
         # The faster the rate, the worse the stability
         # and the need to choose a suitable digital filter(REG_MODE1)
-        if ADC.ADS1263_init_ADC1("ADS1263_400SPS") == -1:
+        if adc.ADS1263_init_ADC1("ADS1263_400SPS") == -1:
             exit()
-        ADC.ADS1263_SetMode(0)  # 0 is singleChannel, 1 is diffChannel
+        adc.ADS1263_SetMode(0)  # 0 is singleChannel, 1 is diffChannel
 
         print("Running measurements loop")
         while True:
@@ -217,7 +217,7 @@ if __name__ == "__main__":
 
             while True:
                 try:
-                    measure()
+                    measure(adc)
                 except IOError as e:
                     print("Exception: ", error)
                 except Exception as error:
@@ -232,5 +232,5 @@ if __name__ == "__main__":
 
     except Exception as error:
         print("Exception: ", error)
-        ADC.ADS1263_Exit()
+        adc.ADS1263_Exit()
         exit()
