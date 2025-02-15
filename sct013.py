@@ -67,9 +67,9 @@ from paho.mqtt import client as mqtt_client
 debug = True
 
 # ADS1263
-# samples = 200
-ref_voltage = 230
-sensors_count = 9
+samples = 200
+ref_voltage = 3.3
+inputs_count = 10
 time_elapsed = 0
 
 # MQTT
@@ -104,55 +104,58 @@ def publish(client, topic, msg):
         raise RuntimeError("Failed to send message to topic {}".format(topic))
 
 
-def measure(ADC):
+def get_measurement(adc):
+    channelList = [i for i in range(inputs_count)]
+    raw_data = adc.ADS1263_GetAll(channelList)
+    for i in channelList:
+        if raw_data[i] >> 31 == 1:
+            raw_data[i] = round(
+                ref_voltage * 2 - raw_data[i] * ref_voltage / 0x80000000, 4
+            )
+        else:
+            raw_data[i] = round(raw_data[i] * ref_voltage / 0x7FFFFFFF, 4)
+
+    #     print("ADC1 IN%d = %lf" % (i, raw_data[i]))
+
+    # for i in channelList:
+    #     print("\33[2A")
+
+    return raw_data
+
+
+def measure(adc):
     while True:
+        print("Starting measurement")
+
         # start timer for kWh calculations
         start_time = time()
 
-        channelList = channelList = [i for i in range(10)]
-        while 1:
-            ADC_Value = ADC.ADS1263_GetAll(channelList)
-            for i in channelList:
-                if ADC_Value[i] >> 31 == 1:
-                    print(
-                        "ADC1 IN%d = -%lf"
-                        % (
-                            i,
-                            (ref_voltage * 2 - ADC_Value[i] * ref_voltage / 0x80000000),
-                        )
-                    )
-                else:
-                    print(
-                        "ADC1 IN%d = %lf"
-                        % (i, (ADC_Value[i] * ref_voltage / 0x7FFFFFFF))
-                    )
-            for i in channelList:
-                print("\33[2A")
+        # while 1:
+        #     raw_data = get_measurement(adc)
 
-        # count = int(0)
-        # data = [0] * sensors_count
-        # peak = [0] * sensors_count
-        # IrmsA = [0] * sensors_count
-        # ampsA = [0] * sensors_count
-        # voltage = float(0)
-        # kW = float(0)
+        count = int(0)
+        peaks = [0.0 for i in range(inputs_count)]
+        IrmsA = [0.0 for i in range(inputs_count)]
+        ampsA = [0.0 for i in range(inputs_count)]
+        kW = float(0)
 
-        # while count < samples:
-        #     count += 1
+        while count < samples:
+            count += 1
 
-        #     for i in range(0, sensors_count):
-        #         data[i] = abs(adc1.read_adc(i, gain=GAIN_A))
+            raw_data = get_measurement(adc)
+            for i in range(0, inputs_count):
+                if raw_data[i] > peaks[i]:
+                    peaks[i] = raw_data[i]
 
-        #         # see if you have a new peak
-        #         if data[i] > peak[i]:
-        #             peak[i] = data[i]
+            # Calibrated for SCT-013 30A/1V
+            for i in range(0, inputs_count):
+                IrmsA[i] = round(float(peaks[i] / float(2047) * 30), 4)
+                ampsA[i] = round(IrmsA[i] / sqrt(2), 4)
 
-        #     # Calibrated for SCT-013 30A/1V
-        #     for i in range(0, sensors_count):
-        #         IrmsA[i] = float(peak[i] / float(2047) * 30)
-        #         IrmsA[i] = round(IrmsA[i], 4)
-        #         ampsA[i] = IrmsA[i] / sqrt(2)
-        #         ampsA[i] = round(ampsA[i], 4)
+        print("raw_data: ", raw_data)
+        print("peaks:    ", peaks)
+        print("IrmsA:    ", IrmsA)
+        print("ampsA:    ", ampsA)
 
         # # Calculate total AMPS from all sensors and convert to kW
         # kW = 0.0
@@ -190,9 +193,9 @@ def measure(ADC):
         # publish(client, "/sensors/living_room/dht22/temperature", temperature)
         # publish(client, "/sensors/living_room/dht22/humidity", humidity)
 
-        delay = 10
+        delay = 300
         if debug:
-            delay = 30
+            delay = 10
             print("Measurement done, sleeping for {}s".format(delay))
         sleep(delay)
 
