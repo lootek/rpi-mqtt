@@ -153,11 +153,11 @@ if __name__ == "__main__":
     try:
         print("Initializing ADS1263")
         adc = ADS1263.ADS1263()
-        adc.ADS1263_reset()
-        adc.ADS1263_init()
+#        adc.ADS1263_reset()
+#        adc.ADS1263_init()
 
-        chip_id = adc.ADS1263_ReadChipID()
-        print("Chip ID: ", chip_id)
+#        chip_id = adc.ADS1263_ReadChipID()
+#        print("Chip ID: ", chip_id)
 
         if adc.ADS1263_init_ADC1("ADS1263_14400SPS") == -1:
             exit()
