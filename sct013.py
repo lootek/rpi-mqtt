@@ -55,12 +55,12 @@ def get_measurement(adc):
     channelList = [i for i in range(inputs_count)]
     raw_data = adc.ADS1263_GetAll(channelList)
     for i in channelList:
-        if raw_data[i] >> 31 == 1:
-            raw_data[i] = round(
-                ref_voltage * 2 - raw_data[i] * ref_voltage / 0x80000000, 4
-            )
-        else:
-            raw_data[i] = round(raw_data[i] * ref_voltage / 0x7FFFFFFF, 4)
+        # if raw_data[i] >> 31 == 1:
+        #     raw_data[i] = round(
+        #         ref_voltage * 2 - raw_data[i] * ref_voltage / 0x80000000, 4
+        #     )
+        # else:
+        raw_data[i] = round(raw_data[i] * ref_voltage / 0x7FFFFFFF, 4)
 
     #     print("ADC1 IN%d = %lf" % (i, raw_data[i]))
 
