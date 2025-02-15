@@ -153,12 +153,15 @@ if __name__ == "__main__":
     try:
         print("Initializing ADS1263")
         adc = ADS1263.ADS1263()
+        adc.ADS1263_reset()
+        adc.ADS1263_init()
 
-        # The faster the rate, the worse the stability
-        # and the need to choose a suitable digital filter(REG_MODE1)
-        if adc.ADS1263_init_ADC1("ADS1263_400SPS") == -1:
+        chip_id = adc.ADS1263_ReadChipID()
+        print("Chip ID: ", chip_id)
+
+        if adc.ADS1263_init_ADC1("ADS1263_14400SPS") == -1:
             exit()
-        adc.ADS1263_SetMode(0)  # 0 is singleChannel, 1 is diffChannel
+        adc.ADS1263_SetMode(0)
 
         print("Running measurements loop")
         while True:
