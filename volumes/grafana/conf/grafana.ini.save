@@ -825,8 +825,7 @@
 #################################### SMTP / Emailing ##########################
 [smtp]
 enabled = true
-host = localhost:25
-#host = 172.18.0.1:25
+host = 192.168.10.18:25
 ;user =
 # If the password contains # or ; you have to wrap it with triple quotes. Ex """#password;"""
 ;password =
