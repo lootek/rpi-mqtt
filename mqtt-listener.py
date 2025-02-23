@@ -60,6 +60,7 @@ def save_msg(msg):
         value = float(msg.payload)
     except:
         logging.info("Couldn't convert {} to float".format(msg.payload))
+        pass
 
     location, sensor, measurement = extract_sensor_data(msg.topic)
     if not measurement:
@@ -79,7 +80,14 @@ def save_msg(msg):
         }
     ]
     logging.info(json_body)
-    influx_client_mqtt.write_points(json_body)
+
+    try:
+        influx_client_mqtt.write_points(json_body)
+    except Exception as error:
+        print("Failed to write to influxdb: ", error)
+        print("Data topic: ", msg.topic)
+        print("Data payload: ", msg.payload)
+        pass
 
 
 def save_msg_wrapper(msg):
