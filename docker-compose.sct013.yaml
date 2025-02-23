@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  iot-sct013:
+    image: iot-sct013:latest
+    container_name: iot-sct013
+    restart: unless-stopped
+    privileged: true
