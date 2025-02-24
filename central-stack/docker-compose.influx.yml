@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    restart: unless-stopped
+    ports:
+     - "8083:8083"
+     - "8086:8086"
+    volumes:
+     - ../volumes/influxdb/var:/var/lib/influxdb
+     - ../volumes/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf

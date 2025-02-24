@@ -33,7 +33,6 @@ RUN git clone https://github.com/waveshare/High-Pricision_AD_HAT && \
     cp High-Pricision_AD_HAT/python/*.py .
 
 COPY High-Precision-AD-HAT.patch .
-#RUN patch -s -p0 < High-Precision-AD-HAT.patch
 RUN patch < High-Precision-AD-HAT.patch
 
 COPY sct013.py .

@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  iot-dht22:
+    image: iot-dht22:latest
+    build: .
+    container_name: iot-dht22
+    restart: unless-stopped
+    privileged: true

@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  grafana:
+    image: grafana/grafana:11.5.1
+    container_name: grafana
+    network_mode: host
+    env_file:
+     - './env/grafana'
+    restart: unless-stopped
+    ports:
+     - "3000:3000"
+    volumes:
+      - ./volumes/grafana/db:/var/lib/grafana
+      - ./volumes/grafana/log:/var/log/grafana
+      - ./volumes/grafana/conf:/etc/grafana
