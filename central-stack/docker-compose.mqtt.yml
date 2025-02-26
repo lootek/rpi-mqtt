@@ -10,7 +10,6 @@ services:
     restart: unless-stopped
     depends_on:
       - mosquitto
-      - influxdb
 
   mosquitto:
     image: eclipse-mosquitto:2.0.18
