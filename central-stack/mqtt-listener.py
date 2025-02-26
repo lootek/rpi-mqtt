@@ -6,8 +6,8 @@ import re
 
 logging.basicConfig(level=logging.INFO)
 
-influx_client_iot = InfluxDBClient("influxdb", 8086, database="iot")
-influx_client_mqtt = InfluxDBClient("influxdb", 8086, database="mqtt")
+influx_client_iot = InfluxDBClient("192.168.10.22", 8086, database="iot")
+influx_client_mqtt = InfluxDBClient("192.168.10.22", 8086, database="mqtt")
 
 
 def save_msg_legacy(msg):
